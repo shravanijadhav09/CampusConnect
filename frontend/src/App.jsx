@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Landing from "./pages/Landing";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -6,6 +7,8 @@ import Register from "./pages/Register";
 import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import Dashboard from "./pages/Dashboard";
+
+import "./App.css";
 
 function App() {
   return (

@@ -2,15 +2,19 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav>
-      <div>
-        <Link to="/">CampusConnect</Link>
-      </div>
+    <nav className="navbar">
+      <Link to="/" className="logo">
+        CampusConnect
+      </Link>
 
-      <div>
+      <div className="nav-links">
         <Link to="/events">Events</Link>
+        <Link to="/dashboard">Dashboard</Link>
         <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
+
+        <Link to="/register" className="nav-register">
+          Join Now
+        </Link>
       </div>
     </nav>
   );
