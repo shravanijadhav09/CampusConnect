@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import pool from "./config/db.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import { protect } from "./middleware/authMiddleware.js";
+import registrationRoutes from "./routes/registrationRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -12,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/registrations", registrationRoutes);
 
 
 app.get("/", (req, res) => {
@@ -37,8 +40,11 @@ app.get("/api/test-db", async (req, res) => {
   }
 });
 
-app.get("/api/auth/test", (req, res) => {
-  res.json({ message: "Auth route working" });
+app.get("/api/protected", protect, (req, res) => {
+  res.json({
+    message: "You are authenticated!",
+    user: req.user,
+  });
 });
 
 const PORT = process.env.PORT || 5000;

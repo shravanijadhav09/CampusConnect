@@ -313,6 +313,7 @@
 .event-button {
   display: inline-block;
   margin-top: 8px;
+  margin-right: 12px;
   padding: 10px 17px;
   border-radius: 9px;
   background: #7c3aed;

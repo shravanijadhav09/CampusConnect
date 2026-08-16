@@ -8,6 +8,7 @@ function EventDetails() {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [registerMessage, setRegisterMessage] = useState("");
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -44,6 +45,37 @@ function EventDetails() {
     );
   }
 
+  
+const handleRegister = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setRegisterMessage("Please login to register.");
+      return;
+    }
+
+    const response = await axios.post(
+      `http://localhost:5000/api/registrations/events/${id}/register`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setRegisterMessage(response.data.message);
+  } catch (error) {
+    console.error("Registration error:", error);
+
+    setRegisterMessage(
+      error.response?.data?.message || "Registration failed."
+    );
+  }
+};
+
+
   return (
     <div className="page">
       <div className="event-card">
@@ -67,9 +99,18 @@ function EventDetails() {
         <Link to="/events" className="event-button">
           Back to Events
         </Link>
+
+        <button
+        className="event-button"
+        onClick={handleRegister}
+      >
+        Register for Event
+      </button>
+      {registerMessage && (
+      <p>{registerMessage}</p>
+      )}
       </div>
     </div>
   );
 }
-
 export default EventDetails;

@@ -76,6 +76,7 @@ function Events() {
           >
             View Details
           </Link>
+       
           </div>
         ))
       )}
