@@ -24,3 +24,32 @@ export const getEvents = async (req, res) => {
     });
   }
 };
+
+export const getEventById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("the event id :", id);
+    const result = await pool.query(
+      "SELECT * FROM events WHERE id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("EVENT BY ID ERROR:", error.message);
+    console.error("CODE:", error.code);
+    console.error("DETAIL:", error.detail);
+
+    res.status(500).json({
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+    });
+  }
+};
