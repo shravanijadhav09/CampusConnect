@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -69,9 +70,12 @@ function Events() {
               <strong>Category:</strong> {event.category}
             </p>
 
-            <button className="event-button">
-              View Details
-            </button>
+                      <Link
+            to={`/events/${event.id}`}
+            className="event-button"
+          >
+            View Details
+          </Link>
           </div>
         ))
       )}

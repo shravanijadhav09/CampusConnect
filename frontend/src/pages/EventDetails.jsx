@@ -1,93 +1,74 @@
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 
 function EventDetails() {
   const { id } = useParams();
 
-  const events = {
-    1: {
-      title: "Tech Hackathon",
-      category: "Hackathon",
-      description:
-        "A hands-on hackathon where students can build innovative solutions, work in teams and solve real-world problems.",
-      date: "August 25, 2026",
-      venue: "Innovation Lab",
-      organizer: "Tech Club",
-    },
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    2: {
-      title: "AI Workshop",
-      category: "Workshop",
-      description:
-        "An introductory workshop covering artificial intelligence concepts and modern AI tools.",
-      date: "August 28, 2026",
-      venue: "Seminar Hall",
-      organizer: "AI Club",
-    },
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/events/${id}`
+        );
 
-    3: {
-      title: "Coding Contest",
-      category: "Competition",
-      description:
-        "Put your coding and problem-solving skills to the test in this exciting competition.",
-      date: "September 2, 2026",
-      venue: "Computer Lab",
-      organizer: "Coding Club",
-    },
-  };
+        setEvent(response.data);
+      } catch (error) {
+        console.error("Error fetching event:", error);
+        setError("Unable to load event details.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const event = events[id];
+    fetchEvent();
+  }, [id]);
 
-  if (!event) {
+  if (loading) {
     return (
-      <main className="page">
-        <h1>Event not found</h1>
+      <div className="page">
+        <h1>Loading event...</h1>
+      </div>
+    );
+  }
 
-        <Link to="/events" className="primary-button">
-          Back to Events
-        </Link>
-      </main>
+  if (error) {
+    return (
+      <div className="page">
+        <h1>{error}</h1>
+      </div>
     );
   }
 
   return (
-    <main className="details-page">
-      <Link to="/events" className="back-link">
-        ← Back to Events
-      </Link>
-
-      <div className="details-card">
-        <span className="event-category">
-          {event.category}
-        </span>
-
+    <div className="page">
+      <div className="event-card">
         <h1>{event.title}</h1>
 
-        <p className="details-description">
-          {event.description}
+        <p>{event.description}</p>
+
+        <p>
+          <strong>Date:</strong>{" "}
+          {new Date(event.date).toLocaleDateString()}
         </p>
 
-        <div className="details-info">
-          <div>
-            <span>📅 Date</span>
-            <strong>{event.date}</strong>
-          </div>
+        <p>
+          <strong>Venue:</strong> {event.venue}
+        </p>
 
-          <div>
-            <span>📍 Venue</span>
-            <strong>{event.venue}</strong>
-          </div>
+        <p>
+          <strong>Category:</strong> {event.category}
+        </p>
 
-          <div>
-            <span>👤 Organizer</span>
-            <strong>{event.organizer}</strong>
-          </div>
-        </div>
-
-        <button className="primary-button">
-          Register for Event
-        </button>
+        <Link to="/events" className="event-button">
+          Back to Events
+        </Link>
       </div>
-    </main>
+    </div>
   );
 }
 
