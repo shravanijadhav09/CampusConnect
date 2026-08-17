@@ -81,3 +81,35 @@ export const getMyRegistrations = async (req, res) => {
     });
   }
 };
+
+export const getAllRegistrations = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        registrations.id AS registration_id,
+        users.id AS user_id,
+        users.name,
+        users.email,
+        events.id AS event_id,
+        events.title AS event_title,
+        registrations.registered_at
+      FROM registrations
+      JOIN users
+        ON registrations.user_id = users.id
+      JOIN events
+        ON registrations.event_id = events.id
+      ORDER BY registrations.registered_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(
+      "Get registrations error:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch registrations",
+    });
+  }
+};

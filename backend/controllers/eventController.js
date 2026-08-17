@@ -53,3 +53,131 @@ export const getEventById = async (req, res) => {
     });
   }
 };
+
+export const createEvent = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      date,
+      venue,
+      category,
+    } = req.body;
+
+    if (!title || !description || !date || !venue || !category) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO events
+       (title, description, date, venue, category, organizer_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        title,
+        description,
+        date,
+        venue,
+        category,
+        req.user.id,
+      ]
+    );
+
+    res.status(201).json({
+      message: "Event created successfully",
+      event: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Create event error:", error);
+
+    res.status(500).json({
+      message: "Failed to create event",
+    });
+  }
+};
+
+export const deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      "DELETE FROM events WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
+
+    res.json({
+      message: "Event deleted successfully",
+      event: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Delete event error:", error);
+
+    res.status(500).json({
+      message: "Failed to delete event",
+    });
+  }
+};
+
+export const updateEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      title,
+      description,
+      date,
+      venue,
+      category,
+    } = req.body;
+
+    if (!title || !description || !date || !venue || !category) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    const result = await pool.query(
+      `UPDATE events
+       SET title = $1,
+           description = $2,
+           date = $3,
+           venue = $4,
+           category = $5
+       WHERE id = $6
+       RETURNING *`,
+      [
+        title,
+        description,
+        date,
+        venue,
+        category,
+        id,
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
+
+    res.json({
+      message: "Event updated successfully",
+      event: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Update event error:", error);
+
+    res.status(500).json({
+      message: "Failed to update event",
+    });
+  }
+};

@@ -6,6 +6,9 @@ import eventRoutes from "./routes/eventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import { protect } from "./middleware/authMiddleware.js";
 import registrationRoutes from "./routes/registrationRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
+
 dotenv.config();
 
 const app = express();
@@ -15,7 +18,7 @@ app.use(express.json());
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/registrations", registrationRoutes);
-
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.json({
