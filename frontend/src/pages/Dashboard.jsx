@@ -104,7 +104,10 @@ function Dashboard() {
       </div>
 
       <section className="dashboard-section">
-        <h2>My Registered Events</h2>
+        <div className="section-header-inline">
+          <h2>My Registrations</h2>
+          <span className="section-status-pill">{registrations.length} total</span>
+        </div>
 
         {registrations.length === 0 ? (
           <div className="empty-dashboard">
@@ -122,38 +125,47 @@ function Dashboard() {
             </Link>
           </div>
         ) : (
-          registrations.map((registration) => (
-            <div
-              className="dashboard-event"
-              key={registration.registration_id}
-            >
-              <div>
-                <span className="event-category">
-                  {registration.category}
-                </span>
+          registrations.map((registration) => {
+            const eventDate = new Date(registration.date);
+            const now = new Date();
+            const status = eventDate < now ? "Completed" : "Upcoming";
 
-                <h3>{registration.title}</h3>
-
-                <p>{registration.description}</p>
-
-                <p>
-                  📅{" "}
-                  {new Date(
-                    registration.date
-                  ).toLocaleDateString()}
-                </p>
-
-                <p>📍 {registration.venue}</p>
-              </div>
-
-              <Link
-                to={`/events/${registration.event_id}`}
-                className="secondary-button"
+            return (
+              <div
+                className="dashboard-event"
+                key={registration.registration_id}
               >
-                View Details
-              </Link>
-            </div>
-          ))
+                <div className="dashboard-event-content">
+                  <div className="event-meta-row">
+                    <span className="event-category">
+                      {registration.category}
+                    </span>
+                    <span className={`status-badge ${status.toLowerCase()}`}>
+                      {status}
+                    </span>
+                  </div>
+
+                  <h3>{registration.title}</h3>
+
+                  <p className="dashboard-description">
+                    {registration.description}
+                  </p>
+
+                  <div className="dashboard-event-details">
+                    <p>📅 {new Date(registration.date).toLocaleDateString()}</p>
+                    <p>📍 {registration.venue}</p>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/events/${registration.event_id}`}
+                  className="secondary-button compact-btn"
+                >
+                  View
+                </Link>
+              </div>
+            );
+          })
         )}
       </section>
 
@@ -161,7 +173,7 @@ function Dashboard() {
         <h2>Saved Events</h2>
 
         {savedEvents.length === 0 ? (
-          <div className="empty-dashboard">
+          <div className="empty-dashboard small-empty">
             <span>⭐</span>
 
             <h3>No saved events yet</h3>
@@ -179,7 +191,7 @@ function Dashboard() {
                   <h3>Event #{eventId}</h3>
                 </div>
 
-                <Link to={`/events/${eventId}`} className="secondary-button">
+                <Link to={`/events/${eventId}`} className="secondary-button compact-btn">
                   Open
                 </Link>
               </div>
