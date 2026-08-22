@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import logoImage from "../../../image/logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -15,8 +16,9 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="logo">
-        CampusConnect
+      <Link to="/" className="logo" aria-label="CampusConnect home">
+        <img src={logoImage} alt="CampusConnect logo" className="logo-image" />
+        <span className="logo-name">CampusConnect</span>
       </Link>
 
       <div className="nav-links">

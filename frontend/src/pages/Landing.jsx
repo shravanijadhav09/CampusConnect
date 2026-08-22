@@ -1,46 +1,41 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import EventCard from "../components/EventCard";
 
 function Landing() {
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Tech Hackathon",
-      description:
-        "Build innovative solutions and compete with talented students.",
-      date: "August 25, 2026",
-      venue: "Innovation Lab",
-      category: "Hackathon",
-    },
-    {
-      id: 2,
-      title: "AI Workshop",
-      description:
-        "Explore the basics of artificial intelligence and modern AI tools.",
-      date: "August 28, 2026",
-      venue: "Seminar Hall",
-      category: "Workshop",
-    },
-    {
-      id: 3,
-      title: "Coding Contest",
-      description:
-        "Challenge yourself and test your problem-solving skills.",
-      date: "September 2, 2026",
-      venue: "Computer Lab",
-      category: "Competition",
-    },
-  ];
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/events");
+
+        const today = new Date();
+
+        const upcoming = response.data
+          .filter((event) => new Date(event.date) >= today)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .slice(0, 3);
+
+        setUpcomingEvents(upcoming);
+      } catch (error) {
+        console.error("Failed to fetch upcoming events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUpcomingEvents();
+  }, []);
 
   return (
     <main>
       {/* Hero */}
-
       <section className="hero">
         <div className="hero-content">
-          <span className="hero-badge">
-            🎓 Made for students
-          </span>
+          <span className="hero-badge">🎓 Made for students</span>
 
           <h1>
             Your Campus.
@@ -51,8 +46,8 @@ function Landing() {
           </h1>
 
           <p>
-            Discover workshops, hackathons, competitions,
-            clubs and exciting events happening around your campus.
+            Discover workshops, hackathons, competitions, clubs and exciting
+            events happening around your campus.
           </p>
 
           <div className="hero-buttons">
@@ -66,17 +61,31 @@ function Landing() {
           </div>
         </div>
 
-        <div className="hero-visual">
-          <div className="hero-card">
-            <span>✨</span>
-            <h3>Something exciting is happening!</h3>
-            <p>Find your next campus experience.</p>
-          </div>
-        </div>
+       <div className="hero-visual">
+  <div className="hero-card preview-card">
+    <div className="card-badge">⚡ Next Up</div>
+    {upcomingEvents.length > 0 ? (
+      <>
+        <span className="card-tag">{upcomingEvents[0].category}</span>
+        <h3>{upcomingEvents[0].title}</h3>
+        <p className="card-date">
+          📅 {new Date(upcomingEvents[0].date).toLocaleDateString()}
+        </p>
+        <p className="card-venue">📍 {upcomingEvents[0].venue}</p>
+      </>
+    ) : (
+      <>
+        <span className="card-tag">Hackathon</span>
+        <h3>Annual Tech Clash</h3>
+        <p className="card-date">📅 Coming Soon</p>
+        <p className="card-venue">📍 Main Auditorium</p>
+      </>
+    )}
+  </div>
+</div>
       </section>
 
       {/* Why CampusConnect */}
-
       <section className="why-section">
         <div className="section-heading">
           <span>Why CampusConnect?</span>
@@ -93,33 +102,27 @@ function Landing() {
             <div className="feature-icon">🔎</div>
             <h3>Discover Events</h3>
             <p>
-              Easily find workshops, hackathons,
-              competitions and activities.
+              Easily find workshops, hackathons, competitions and activities.
             </p>
           </div>
 
           <div className="feature-card">
             <div className="feature-icon">📅</div>
             <h3>Stay Updated</h3>
-            <p>
-              Never miss an exciting event happening
-              on your campus.
-            </p>
+            <p>Never miss an exciting event happening on your campus.</p>
           </div>
 
           <div className="feature-card">
             <div className="feature-icon">🤝</div>
             <h3>Connect</h3>
             <p>
-              Meet students, discover communities and
-              participate together.
+              Meet students, discover communities and participate together.
             </p>
           </div>
         </div>
       </section>
 
       {/* Upcoming Events */}
-
       <section className="events-section">
         <div className="section-heading events-heading">
           <div>
@@ -132,18 +135,20 @@ function Landing() {
           </Link>
         </div>
 
-        <div className="events-grid">
-          {upcomingEvents.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <p>Loading events...</p>
+        ) : upcomingEvents.length === 0 ? (
+          <p>No upcoming events available.</p>
+        ) : (
+          <div className="events-grid">
+            {upcomingEvents.map((event) => (
+              <EventCard key={event.id || event._id} event={event} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA */}
-
       <section className="cta-section">
         <h2>Ready to explore your campus?</h2>
 
@@ -157,13 +162,10 @@ function Landing() {
       </section>
 
       {/* Footer */}
-
       <footer className="footer">
         <div>
           <h3>CampusConnect</h3>
-          <p>
-            Connecting students with their campus community.
-          </p>
+          <p>Connecting students with their campus community.</p>
         </div>
 
         <p>© 2026 CampusConnect</p>

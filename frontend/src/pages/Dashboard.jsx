@@ -5,6 +5,7 @@ import axios from "axios";
 
 function Dashboard() {
   const [registrations, setRegistrations] = useState([]);
+  const [savedEvents, setSavedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -41,6 +42,8 @@ function Dashboard() {
       }
     };
 
+    const saved = JSON.parse(localStorage.getItem("savedEvents") || "[]");
+    setSavedEvents(saved);
     fetchRegistrations();
   }, []);
 
@@ -88,9 +91,9 @@ function Dashboard() {
         </div>
 
         <div className="stat-card">
-          <span>🎓</span>
-          <strong>Campus</strong>
-          <p>Your Events</p>
+          <span>⭐</span>
+          <strong>{savedEvents.length}</strong>
+          <p>Saved Events</p>
         </div>
 
         <div className="stat-card">
@@ -151,6 +154,37 @@ function Dashboard() {
               </Link>
             </div>
           ))
+        )}
+      </section>
+
+      <section className="dashboard-section dashboard-saved-section">
+        <h2>Saved Events</h2>
+
+        {savedEvents.length === 0 ? (
+          <div className="empty-dashboard">
+            <span>⭐</span>
+
+            <h3>No saved events yet</h3>
+
+            <p>
+              Save the events you like and revisit them later.
+            </p>
+          </div>
+        ) : (
+          <div className="saved-event-list">
+            {savedEvents.map((eventId) => (
+              <div className="saved-event-item" key={eventId}>
+                <div>
+                  <span className="event-category">Saved</span>
+                  <h3>Event #{eventId}</h3>
+                </div>
+
+                <Link to={`/events/${eventId}`} className="secondary-button">
+                  Open
+                </Link>
+              </div>
+            ))}
+          </div>
         )}
       </section>
     </main>

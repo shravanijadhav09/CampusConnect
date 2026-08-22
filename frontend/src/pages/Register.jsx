@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -79,7 +78,25 @@ function Register() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
+          {/* Dummy inputs trick the browser autofill engine */}
+          <input
+            type="text"
+            name="prevent_autofill"
+            id="prevent_autofill"
+            value=""
+            style={{ display: "none" }}
+            readOnly
+          />
+          <input
+            type="password"
+            name="password_fake"
+            id="password_fake"
+            value=""
+            style={{ display: "none" }}
+            readOnly
+          />
+
           <label>Full Name</label>
 
           <input
@@ -88,6 +105,7 @@ function Register() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter your name"
+            autoComplete="name"
             required
           />
 
@@ -99,6 +117,7 @@ function Register() {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter your email"
+            autoComplete="off"
             required
           />
 
@@ -110,6 +129,7 @@ function Register() {
             value={formData.password}
             onChange={handleChange}
             placeholder="Create a password"
+            autoComplete="new-password"
             required
           />
 
@@ -121,6 +141,7 @@ function Register() {
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="Confirm your password"
+            autoComplete="new-password"
             required
           />
 
@@ -154,4 +175,3 @@ function Register() {
 }
 
 export default Register;
-

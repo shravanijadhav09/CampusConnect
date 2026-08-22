@@ -32,8 +32,12 @@ function Login() {
         JSON.stringify(response.data.user)
       );
 
-      // Go to events page
-      navigate("/events");
+      // Redirect based on role
+      if (response.data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Login error:", error);
 
@@ -59,24 +63,34 @@ function Login() {
 
         <form onSubmit={handleLogin}>
           <label>Email</label>
+
           <input
             type="email"
+            name="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
             required
           />
 
           <label>Password</label>
+
           <input
             type="password"
+            name="password"
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             required
           />
 
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <p className="error-message">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
